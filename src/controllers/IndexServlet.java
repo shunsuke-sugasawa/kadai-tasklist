@@ -40,13 +40,12 @@ public class IndexServlet extends HttpServlet {
             page = Integer.parseInt(request.getParameter("page"));
         } catch(NumberFormatException e) {}
 
-        List<Task> tasks = em.createNamedQuery("getAllTasks", Task.class)
+        List<Task> tasks = em.createNamedQuery("getAllTask", Task.class)
                 .setFirstResult(15 * (page - 1))
                 .setMaxResults(15)
                 .getResultList();
 
-        // 全件数を取得
-        long tasks_count = (long)em.createNamedQuery("getTasksCount", Long.class)
+        long tasks_count = (long)em.createNamedQuery("getTaskCount", Long.class)
                                       .getSingleResult();
 
         em.close();
@@ -54,14 +53,15 @@ public class IndexServlet extends HttpServlet {
         request.setAttribute("tasks", tasks);
         request.setAttribute("tasks_count", tasks_count);     // 全件数
         request.setAttribute("page", page);
-        
+                        
         if(request.getSession().getAttribute("flush") != null) {
             request.setAttribute("flush", request.getSession().getAttribute("flush"));
             request.getSession().removeAttribute("flush");
+        }
         
         RequestDispatcher rd = request.getRequestDispatcher("/WEB-INF/views/tasks/index.jsp");
         rd.forward(request, response);
-    }
+    
     }
 }
 
